@@ -31,6 +31,7 @@ import com.example.weatherpro.features.weather.WeatherViewModel
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     weatherViewModel: WeatherViewModel
 ) {
 
@@ -47,7 +48,6 @@ fun HomeScreen(
 
             if (granted) {
 
-                // We'll fetch location below
             }
         }
 
@@ -99,8 +99,6 @@ fun HomeScreen(
         uiState.error != null -> {
 
             Column(
-                modifier =
-                    Modifier.fillMaxSize(),
                 verticalArrangement =
                     Arrangement.Center,
                 horizontalAlignment =

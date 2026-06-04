@@ -19,6 +19,7 @@ import com.example.weatherpro.features.weather.WeatherViewModel
 
 @Composable
 fun ForecastScreen(
+    modifier: Modifier = Modifier,
     weatherViewModel: WeatherViewModel
 ) {
 
@@ -45,8 +46,6 @@ fun ForecastScreen(
         state.error != null -> {
 
             Column(
-                modifier =
-                    Modifier.fillMaxSize(),
                 horizontalAlignment =
                     Alignment.CenterHorizontally,
                 verticalArrangement =

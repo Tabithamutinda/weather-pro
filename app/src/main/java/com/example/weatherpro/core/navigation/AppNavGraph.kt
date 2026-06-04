@@ -1,6 +1,8 @@
 package com.example.weatherpro.core.navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -37,27 +39,41 @@ fun AppNavGraph(weatherViewModel: WeatherViewModel) {
         }
 
         composable(Screen.Home.route) {
-
             WeatherScaffold(
+
                 navController = navController
-            ) {
+
+            ) { padding ->
+
                 HomeScreen(
-                    weatherViewModel =
-                        weatherViewModel
+
+                    modifier = Modifier.padding(padding),
+
+                    weatherViewModel = weatherViewModel
+
                 )
+
             }
+
         }
 
         composable(Screen.Forecast.route) {
-
             WeatherScaffold(
+
                 navController = navController
-            ) {
+
+            ) { padding ->
+
                 ForecastScreen(
-                    weatherViewModel =
-                        weatherViewModel
+
+                    modifier = Modifier.padding(padding),
+
+                    weatherViewModel = weatherViewModel
+
                 )
+
             }
+
         }
     }
 }

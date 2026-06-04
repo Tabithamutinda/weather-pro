@@ -1,6 +1,8 @@
 package com.example.weatherpro.core.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -20,6 +22,10 @@ fun WeatherScaffold(
         backStack.value?.destination?.route ?: ""
 
     Scaffold(
+
+        contentWindowInsets =
+            WindowInsets.safeDrawing,
+
         bottomBar = {
 
             WeatherBottomBar(
@@ -41,8 +47,7 @@ fun WeatherScaffold(
                 }
             )
         }
-    ) {
-            padding ->
+    ) { padding ->
 
         content(padding)
     }

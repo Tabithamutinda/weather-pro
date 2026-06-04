@@ -8,4 +8,11 @@ interface WeatherRepository {
         lat: Double,
         lon: Double
     ): Weather
+
+    suspend fun getForecast(
+        lat: Double,
+        lon: Double
+    ): Weather
+
+
 }

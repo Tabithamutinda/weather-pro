@@ -20,20 +20,8 @@ sealed class BottomNavItem(
     )
 
     data object Current : BottomNavItem(
-        Screen.Current.route,
-        "Current",
+        Screen.Forecast.route,
+        "Forecast",
         Icons.Outlined.Thermostat
-    )
-
-    data object Hourly : BottomNavItem(
-        Screen.Hourly.route,
-        "Hourly",
-        Icons.Outlined.Schedule
-    )
-
-    data object Daily : BottomNavItem(
-        Screen.Daily.route,
-        "Daily",
-        Icons.Outlined.CalendarMonth
     )
 }

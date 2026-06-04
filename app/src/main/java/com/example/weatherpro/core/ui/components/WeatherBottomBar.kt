@@ -19,8 +19,6 @@ fun WeatherBottomBar(
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Current,
-        BottomNavItem.Hourly,
-        BottomNavItem.Daily
     )
 
     NavigationBar(

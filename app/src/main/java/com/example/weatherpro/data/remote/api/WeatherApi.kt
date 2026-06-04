@@ -19,4 +19,16 @@ interface WeatherApi {
         days: Int = 7
 
     ): WeatherResponseDto
+
+    @GET("v1/forecast")
+
+    suspend fun getForecast(
+
+        @Query("lat") latitude: Double,
+
+        @Query("lon") longitude: Double,
+
+        @Query("days") days: Int = 1
+
+    ):WeatherResponseDto
 }

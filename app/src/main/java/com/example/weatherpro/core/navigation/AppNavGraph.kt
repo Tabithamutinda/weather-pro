@@ -4,14 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.weatherpro.features.current.CurrentScreen
-import com.example.weatherpro.features.daily.DailyScreen
+import com.example.weatherpro.features.forecast.ForecastScreen
 import com.example.weatherpro.features.home.HomeScreen
-import com.example.weatherpro.features.hourly.HourlyScreen
 import com.example.weatherpro.features.splash.SplashScreen
+import com.example.weatherpro.features.weather.WeatherViewModel
 
 @Composable
-fun AppNavGraph() {
+fun AppNavGraph(weatherViewModel: WeatherViewModel) {
 
     val navController = rememberNavController()
 
@@ -42,34 +41,22 @@ fun AppNavGraph() {
             WeatherScaffold(
                 navController = navController
             ) {
-                HomeScreen()
+                HomeScreen(
+                    weatherViewModel =
+                        weatherViewModel
+                )
             }
         }
 
-        composable(Screen.Current.route) {
+        composable(Screen.Forecast.route) {
 
             WeatherScaffold(
                 navController = navController
             ) {
-                CurrentScreen()
-            }
-        }
-
-        composable(Screen.Hourly.route) {
-
-            WeatherScaffold(
-                navController = navController
-            ) {
-                HourlyScreen()
-            }
-        }
-
-        composable(Screen.Daily.route) {
-
-            WeatherScaffold(
-                navController = navController
-            ) {
-                DailyScreen()
+                ForecastScreen(
+                    weatherViewModel =
+                        weatherViewModel
+                )
             }
         }
     }

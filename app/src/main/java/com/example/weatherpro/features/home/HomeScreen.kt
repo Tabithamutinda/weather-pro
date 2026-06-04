@@ -27,15 +27,17 @@ import com.example.weatherpro.features.home.components.DailyForecastSection
 import com.example.weatherpro.features.home.components.HeaderSection
 import com.example.weatherpro.features.home.components.HourlyForecastSection
 import com.example.weatherpro.features.home.components.WeatherSummaryCard
+import com.example.weatherpro.features.weather.WeatherViewModel
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    weatherViewModel: WeatherViewModel
+) {
+
 
     val context = LocalContext.current
 
-    val viewModel: HomeViewModel = viewModel()
-
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by weatherViewModel.uiState.collectAsState()
 
     val permissionLauncher =
         rememberLauncherForActivityResult(
@@ -69,7 +71,7 @@ fun HomeScreen() {
 
             location?.let {
 
-                viewModel.loadWeather(
+                weatherViewModel.loadWeather(
                     latitude = it.first,
                     longitude = it.second
                 )

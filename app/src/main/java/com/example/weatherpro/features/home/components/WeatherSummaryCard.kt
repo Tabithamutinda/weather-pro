@@ -22,11 +22,10 @@ fun WeatherSummaryCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-
             containerColor =
-
-                MaterialTheme.colorScheme.surface
-
+                MaterialTheme.colorScheme.surface.copy(
+                    alpha = 0.9f
+                )
         )
     ) {
 
@@ -50,13 +49,38 @@ fun WeatherSummaryCard(
             )
 
             SummaryRow(
-                "Wind",
-                state.windSpeed
+                "Feels Like",
+                state.feelsLike
             )
 
             SummaryRow(
                 "Humidity",
                 state.humidity
+            )
+
+            SummaryRow(
+                "Wind",
+                state.windSpeed
+            )
+
+            SummaryRow(
+                "Wind Gust",
+                state.windGust
+            )
+
+            SummaryRow(
+                "UV Index",
+                state.uvIndex
+            )
+
+            SummaryRow(
+                "Sunrise",
+                state.sunrise
+            )
+
+            SummaryRow(
+                "Sunset",
+                state.sunset
             )
         }
     }

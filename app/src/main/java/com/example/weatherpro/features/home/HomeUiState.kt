@@ -1,21 +1,55 @@
 package com.example.weatherpro.features.home
 
+import com.example.weatherpro.domain.model.DailyWeather
+import com.example.weatherpro.domain.model.HourlyWeather
+
 data class HomeUiState(
 
-    val city: String = "Nairobi",
+    val isLoading: Boolean = false,
 
-    val date: String = "Thursday, June 5",
+    val city: String = "",
 
-    val temperature: String = "27°",
+    val country: String = "",
 
-    val condition: String = "Partly Cloudy",
+    val date: String = "",
 
-    val humidity: String = "62%",
+    val timezone: String = "",
 
-    val windSpeed: String = "12 km/h",
+    val temperature: String = "",
 
-    val high: String = "29°",
+    val feelsLike: String = "",
 
-    val low: String = "18°"
+    val conditionCode: String = "",
 
+    val iconUrl: String = "",
+
+    val humidity: String = "",
+
+    val windSpeed: String = "",
+
+    val windDirection: String = "",
+
+    val windGust: String = "",
+
+    val uvIndex: String = "",
+
+    val high: String = "",
+
+    val low: String = "",
+
+    val sunrise: String = "",
+
+    val sunset: String = "",
+
+    val precipitationProbability: String = "",
+
+    val hourly: List<HourlyWeather> = emptyList(),
+
+    val daily: List<DailyWeather> = emptyList(),
+
+    val latitude: Double? = null,
+
+    val longitude: Double? = null,
+
+    val error: String? = null
 )

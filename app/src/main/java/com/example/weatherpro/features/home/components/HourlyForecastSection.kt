@@ -1,39 +1,26 @@
 package com.example.weatherpro.features.home.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.WbSunny
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
+import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import com.example.weatherpro.domain.model.HourlyWeather
+import com.example.weatherpro.ui.theme.WeatherTextPrimary
 
-private data class HourlyForecastItem(
-    val time: String,
-    val temperature: String
-)
 
 @Composable
-fun HourlyForecastSection() {
-
-    val forecasts = listOf(
-        HourlyForecastItem("10 AM", "26°"),
-        HourlyForecastItem("11 AM", "27°"),
-        HourlyForecastItem("12 PM", "28°"),
-        HourlyForecastItem("1 PM", "29°"),
-        HourlyForecastItem("2 PM", "29°")
-    )
+fun HourlyForecastSection(
+    forecasts: List<HourlyWeather>
+) {
 
     Column {
 
@@ -43,53 +30,60 @@ fun HourlyForecastSection() {
         )
 
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(vertical = 12.dp)
+            horizontalArrangement =
+                Arrangement.spacedBy(12.dp),
+            contentPadding =
+                PaddingValues(vertical = 12.dp)
         ) {
 
-            items(forecasts) { forecast ->
+            items(
+                forecasts.take(12)
+            ) { forecast ->
 
                 Card(
                     modifier = Modifier
                         .width(100.dp)
-
-                        .height(130.dp),
-                            colors = CardDefaults.cardColors(
-
-                            containerColor =
-
-                                MaterialTheme.colorScheme.surface
-
-                            ),
+                        .height(150.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor =
+                            MaterialTheme.colorScheme.surface.copy(
+                                alpha = 0.9f
+                            )
+                    )
                 ) {
 
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier
-                            .width(90.dp)
+                        horizontalAlignment =
+                            Alignment.CenterHorizontally,
+                        verticalArrangement =
+                            Arrangement.SpaceEvenly,
+                        modifier = Modifier.fillMaxSize()
                     ) {
 
-                        Text(forecast.time)
+                        Text(
+                            forecast.time.takeLast(5)
+                        )
+                        val context = LocalContext.current
 
-                        Icon(
+                        val imageLoader = ImageLoader.Builder(context)
+                            .components {
+                                add(SvgDecoder.Factory())
+                            }
+                            .build()
 
-                            imageVector = Icons.Default.WbSunny,
-
+                        AsyncImage(
+                            model = forecast.iconUrl,
+                            imageLoader = imageLoader,
                             contentDescription = null,
-
-                            tint = MaterialTheme.colorScheme.primary
-
+                            modifier = Modifier.size(50.dp),
+                            colorFilter = ColorFilter.tint(
+                                WeatherTextPrimary
+                            )
                         )
 
                         Text(
-
-                            text = forecast.temperature,
-
-                            style =
-
-                                MaterialTheme.typography.titleMedium
-
+                            text =
+                                "${forecast.temperature.toInt()}°C"
                         )
                     }
                 }

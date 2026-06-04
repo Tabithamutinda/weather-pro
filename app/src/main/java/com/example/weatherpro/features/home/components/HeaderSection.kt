@@ -1,5 +1,6 @@
 package com.example.weatherpro.features.home.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherpro.features.home.HomeUiState
+import coil.compose.AsyncImage
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
+import com.example.weatherpro.core.util.getConditionText
+import com.example.weatherpro.ui.theme.WeatherTextPrimary
 
 @Composable
 fun HeaderSection(
@@ -36,13 +46,11 @@ fun HeaderSection(
             Icon(
                 imageVector =
                     Icons.Default.LocationOn,
-                contentDescription = null,
-                tint =
-                    MaterialTheme.colorScheme.primary
+                contentDescription = null
             )
 
             Text(
-                text = "${state.city}, Kenya"
+                text = "${state.city}, ${state.country}"
             )
         }
 
@@ -55,16 +63,22 @@ fun HeaderSection(
             modifier = Modifier.height(16.dp)
         )
 
-        Icon(
+        val context = LocalContext.current
 
-            imageVector = Icons.Default.WbSunny,
+        val imageLoader = ImageLoader.Builder(context)
+            .components {
+                add(SvgDecoder.Factory())
+            }
+            .build()
 
+        AsyncImage(
+            model = state.iconUrl,
+            imageLoader = imageLoader,
             contentDescription = null,
-
-            tint = MaterialTheme.colorScheme.primary,
-
-            modifier = Modifier.height(90.dp)
-
+            modifier = Modifier.size(120.dp),
+            colorFilter = ColorFilter.tint(
+                WeatherTextPrimary
+            )
         )
 
         Spacer(
@@ -72,13 +86,19 @@ fun HeaderSection(
         )
 
         Text(
-            text = "${state.temperature}C",
-            fontSize = 64.sp
+            text = state.temperature,
+            fontSize = 64.sp,
         )
 
         Text(
-            text = state.condition,
-            style = MaterialTheme.typography.titleMedium
+            text =
+                getConditionText(
+                    state.conditionCode
+                ),
+            style =
+                MaterialTheme.typography.titleMedium
         )
+
+
     }
 }

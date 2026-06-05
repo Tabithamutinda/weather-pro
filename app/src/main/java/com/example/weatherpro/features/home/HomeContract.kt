@@ -3,7 +3,7 @@ package com.example.weatherpro.features.home
 import com.example.weatherpro.domain.model.DailyWeather
 import com.example.weatherpro.domain.model.HourlyWeather
 
-data class HomeUiState(
+data class HomeState(
 
     val isLoading: Boolean = false,
 
@@ -19,10 +19,6 @@ data class HomeUiState(
 
     val feelsLike: String = "",
 
-    val conditionCode: String = "",
-
-    val iconUrl: String = "",
-
     val humidity: String = "",
 
     val windSpeed: String = "",
@@ -32,6 +28,10 @@ data class HomeUiState(
     val windGust: String = "",
 
     val uvIndex: String = "",
+
+    val conditionCode: String = "",
+
+    val iconUrl: String = "",
 
     val high: String = "",
 
@@ -47,9 +47,20 @@ data class HomeUiState(
 
     val daily: List<DailyWeather> = emptyList(),
 
-    val latitude: Double? = null,
-
-    val longitude: Double? = null,
-
     val error: String? = null
 )
+
+sealed interface HomeIntent {
+
+    data class LoadWeather(
+        val latitude: Double,
+        val longitude: Double
+    ) : HomeIntent
+}
+
+sealed interface HomeEvent {
+
+    data class ShowError(
+        val message: String
+    ) : HomeEvent
+}

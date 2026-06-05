@@ -1,7 +1,15 @@
 plugins {
+
     alias(libs.plugins.android.application)
+
     alias(libs.plugins.kotlin.android)
+
     alias(libs.plugins.kotlin.compose)
+
+    alias(libs.plugins.hilt)
+
+    kotlin("kapt")
+
 }
 
 android {
@@ -51,6 +59,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -72,4 +81,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.coil.compose)
     implementation(libs.coil.svg)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
 }

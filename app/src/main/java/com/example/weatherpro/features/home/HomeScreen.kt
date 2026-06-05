@@ -1,8 +1,10 @@
 package com.example.weatherpro.features.home
 
 import android.Manifest
+import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,28 +19,59 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.weatherpro.core.location.LocationTracker
 import com.example.weatherpro.features.home.components.DailyForecastSection
 import com.example.weatherpro.features.home.components.HeaderSection
 import com.example.weatherpro.features.home.components.HourlyForecastSection
 import com.example.weatherpro.features.home.components.WeatherSummaryCard
-import com.example.weatherpro.features.weather.WeatherViewModel
+import com.example.weatherpro.features.location.LocationViewModel
+import kotlinx.coroutines.launch
+
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    weatherViewModel: WeatherViewModel
+    locationViewModel: LocationViewModel,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
-
 
     val context = LocalContext.current
 
-    val uiState by weatherViewModel.uiState.collectAsState()
+    val scope = rememberCoroutineScope()
+
+    val state by viewModel.state.collectAsState()
+
+    fun loadWeatherFromLocation() {
+
+        scope.launch {
+
+            val location =
+                LocationTracker(context)
+                    .getCurrentLocation()
+
+            location?.let {
+
+                locationViewModel.updateLocation(
+                    latitude = it.first,
+                    longitude = it.second
+                )
+
+                viewModel.onIntent(
+                    HomeIntent.LoadWeather(
+                        latitude = it.first,
+                        longitude = it.second
+                    )
+                )
+            }
+        }
+    }
 
     val permissionLauncher =
         rememberLauncherForActivityResult(
@@ -48,98 +81,159 @@ fun HomeScreen(
 
             if (granted) {
 
+                loadWeatherFromLocation()
             }
         }
 
     LaunchedEffect(Unit) {
 
-        permissionLauncher.launch(
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-    }
+        val hasPermission =
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
 
-    LaunchedEffect(uiState.latitude) {
+        if (hasPermission) {
 
-        if (
-            uiState.latitude == null &&
-            uiState.longitude == null
-        ) {
+            loadWeatherFromLocation()
 
-            val location =
-                LocationTracker(context)
-                    .getCurrentLocation()
+        } else {
 
-            location?.let {
-
-                weatherViewModel.loadWeather(
-                    latitude = it.first,
-                    longitude = it.second
-                )
-            }
+            permissionLauncher.launch(
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
         }
     }
 
     when {
 
-        uiState.isLoading -> {
+        state.isLoading -> {
 
             Column(
+
                 modifier =
+
                     Modifier.fillMaxSize(),
+
                 verticalArrangement =
+
                     Arrangement.Center,
+
                 horizontalAlignment =
+
                     Alignment.CenterHorizontally
+
             ) {
 
                 CircularProgressIndicator()
+
             }
+
         }
 
-        uiState.error != null -> {
+        state.error != null -> {
 
             Column(
+
+                modifier =
+
+                    Modifier.fillMaxSize(),
+
                 verticalArrangement =
+
                     Arrangement.Center,
+
                 horizontalAlignment =
+
                     Alignment.CenterHorizontally
+
             ) {
 
                 Text(
+
                     text =
-                        uiState.error ?: "Unknown Error"
+
+                        state.error ?: "Unknown Error"
+
                 )
+
             }
+
         }
 
-        else -> {
+        state.temperature.isBlank() -> {
 
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(
-                        rememberScrollState()
-                    )
-                    .padding(16.dp),
+
+                modifier =
+
+                    Modifier.fillMaxSize(),
+
                 verticalArrangement =
-                    Arrangement.spacedBy(24.dp)
+
+                    Arrangement.Center,
+
+                horizontalAlignment =
+
+                    Alignment.CenterHorizontally
+
             ) {
 
-                HeaderSection(uiState)
-
-                WeatherSummaryCard(uiState)
-
-                HourlyForecastSection(
-                    forecasts = uiState.hourly
-                )
-
-                DailyForecastSection(
-                    forecasts = uiState.daily
-                )
+                CircularProgressIndicator()
 
                 Spacer(
-                    modifier = Modifier.height(100.dp)
+
+                    modifier =
+
+                        Modifier.height(16.dp)
+
                 )
+
+                Text(
+
+                    text =
+
+                        "Getting your location..."
+
+                )
+
+            }
+
+        }
+        else -> {
+
+            AnimatedVisibility(
+
+                visible = true
+
+            ) {
+                Column(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .verticalScroll(
+                            rememberScrollState()
+                        )
+                        .padding(16.dp),
+                    verticalArrangement =
+                        Arrangement.spacedBy(24.dp)
+                ) {
+
+                    HeaderSection(state)
+
+                    WeatherSummaryCard(state)
+
+                    HourlyForecastSection(
+                        forecasts = state.hourly
+                    )
+
+                    DailyForecastSection(
+                        forecasts = state.daily
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(100.dp)
+                    )
+                }
             }
         }
     }

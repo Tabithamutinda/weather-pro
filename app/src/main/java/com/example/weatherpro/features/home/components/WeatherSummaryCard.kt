@@ -12,11 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.weatherpro.features.home.HomeUiState
+import com.example.weatherpro.features.home.HomeState
 
 @Composable
 fun WeatherSummaryCard(
-    state: HomeUiState
+    state: HomeState
 ) {
 
     Card(
@@ -100,8 +100,12 @@ private fun SummaryRow(
             Arrangement.SpaceBetween
     ) {
 
-        Text(label)
+        Text(
+            text = label
+        )
 
-        Text(value)
+        Text(
+            text = value
+        )
     }
 }

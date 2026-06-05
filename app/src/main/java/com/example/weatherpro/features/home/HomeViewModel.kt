@@ -2,31 +2,43 @@ package com.example.weatherpro.features.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherpro.core.network.NetworkModule
-import com.example.weatherpro.data.repository.WeatherRepositoryImpl
+import com.example.weatherpro.core.util.DateFormatter
+import com.example.weatherpro.core.util.ErrorHandler
 import com.example.weatherpro.domain.usecase.GetWeatherUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val getWeatherUseCase: GetWeatherUseCase
+) : ViewModel() {
 
-    private val repository =
-        WeatherRepositoryImpl(
-            NetworkModule.weatherApi
-        )
+    private val _state =
+        MutableStateFlow(HomeState())
 
-    private val getWeatherUseCase =
-        GetWeatherUseCase(repository)
+    val state =
+        _state.asStateFlow()
 
-    private val _uiState =
-        MutableStateFlow(HomeUiState())
+    fun onIntent(
+        intent: HomeIntent
+    ) {
 
-    val uiState: StateFlow<HomeUiState> =
-        _uiState.asStateFlow()
+        when (intent) {
 
-    fun loadWeather(
+            is HomeIntent.LoadWeather -> {
+
+                loadWeather(
+                    intent.latitude,
+                    intent.longitude
+                )
+            }
+        }
+    }
+
+    private fun loadWeather(
         latitude: Double,
         longitude: Double
     ) {
@@ -35,30 +47,27 @@ class HomeViewModel : ViewModel() {
 
             try {
 
-                _uiState.value =
-                    _uiState.value.copy(
+                _state.value =
+                    _state.value.copy(
                         isLoading = true,
                         error = null
                     )
 
                 val weather =
                     getWeatherUseCase(
-                        lat = latitude,
-                        lon = longitude
+                        latitude,
+                        longitude
                     )
 
-                _uiState.value =
-                    HomeUiState(
-
+                _state.value =
+                    _state.value.copy(
                         isLoading = false,
 
                         city = weather.city,
-
                         country = weather.country,
-
-                        date = weather.date,
-
-                        timezone = weather.timezone,
+                        date = DateFormatter.formatDate(
+                            weather.date,
+                            ),
 
                         temperature =
                             "${weather.temperature.toInt()}°C",
@@ -94,10 +103,14 @@ class HomeViewModel : ViewModel() {
                             "${weather.low.toInt()}°",
 
                         sunrise =
-                            weather.sunrise,
+                            DateFormatter.formatTime(
+                                weather.sunrise
+                            ),
 
                         sunset =
-                            weather.sunset,
+                            DateFormatter.formatTime(
+                                weather.sunset
+                            ),
 
                         precipitationProbability =
                             "${weather.precipitationProbability}%",
@@ -108,22 +121,22 @@ class HomeViewModel : ViewModel() {
                         daily =
                             weather.daily,
 
-                        latitude =
-                            latitude,
-
-                        longitude =
-                            longitude
+                        error = null
                     )
 
             } catch (e: Exception) {
+                _state.value =
 
-                _uiState.value =
-                    _uiState.value.copy(
+                    _state.value.copy(
+
                         isLoading = false,
+
                         error =
-                            e.message
-                                ?: "Unable to load weather"
+
+                            ErrorHandler.getMessage(e)
+
                     )
+
             }
         }
     }

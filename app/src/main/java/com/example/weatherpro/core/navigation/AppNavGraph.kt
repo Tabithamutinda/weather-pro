@@ -9,12 +9,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.weatherpro.features.forecast.ForecastScreen
 import com.example.weatherpro.features.home.HomeScreen
 import com.example.weatherpro.features.splash.SplashScreen
-import com.example.weatherpro.features.weather.WeatherViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.weatherpro.features.location.LocationViewModel
 
 @Composable
-fun AppNavGraph(weatherViewModel: WeatherViewModel) {
+fun AppNavGraph() {
 
     val navController = rememberNavController()
+    val locationViewModel: LocationViewModel =
+
+        hiltViewModel()
 
     NavHost(
         navController = navController,
@@ -48,9 +52,7 @@ fun AppNavGraph(weatherViewModel: WeatherViewModel) {
                 HomeScreen(
 
                     modifier = Modifier.padding(padding),
-
-                    weatherViewModel = weatherViewModel
-
+                    locationViewModel = locationViewModel
                 )
 
             }
@@ -67,8 +69,7 @@ fun AppNavGraph(weatherViewModel: WeatherViewModel) {
                 ForecastScreen(
 
                     modifier = Modifier.padding(padding),
-
-                    weatherViewModel = weatherViewModel
+                    locationViewModel = locationViewModel
 
                 )
 

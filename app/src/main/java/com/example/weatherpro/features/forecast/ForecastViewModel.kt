@@ -2,31 +2,46 @@ package com.example.weatherpro.features.forecast
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherpro.core.network.NetworkModule
-import com.example.weatherpro.data.repository.WeatherRepositoryImpl
+import com.example.weatherpro.core.util.ErrorHandler
 import com.example.weatherpro.domain.usecase.GetForecastUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ForecastViewModel : ViewModel() {
+@HiltViewModel
+class ForecastViewModel @Inject constructor(
 
-    private val repository =
-        WeatherRepositoryImpl(
-            NetworkModule.weatherApi
+    private val getForecastUseCase: GetForecastUseCase
+
+) : ViewModel() {
+
+    private val _state =
+        MutableStateFlow(
+            ForecastContract.State()
         )
 
-    private val getForecastUseCase =
-        GetForecastUseCase(repository)
+    val state =
+        _state.asStateFlow()
 
-    private val _uiState =
-        MutableStateFlow(ForecastUiState())
+    fun onIntent(
+        intent: ForecastContract.Intent
+    ) {
 
-    val uiState: StateFlow<ForecastUiState> =
-        _uiState.asStateFlow()
+        when (intent) {
 
-    fun loadForecast(
+            is ForecastContract.Intent.LoadForecast -> {
+
+                loadForecast(
+                    latitude = intent.latitude,
+                    longitude = intent.longitude
+                )
+            }
+        }
+    }
+
+    private fun loadForecast(
         latitude: Double,
         longitude: Double
     ) {
@@ -35,8 +50,8 @@ class ForecastViewModel : ViewModel() {
 
             try {
 
-                _uiState.value =
-                    _uiState.value.copy(
+                _state.value =
+                    _state.value.copy(
                         isLoading = true,
                         error = null
                     )
@@ -47,18 +62,25 @@ class ForecastViewModel : ViewModel() {
                         lon = longitude
                     )
 
-                _uiState.value =
-                    ForecastUiState(
-                        hourly = forecast.hourly
+                _state.value =
+                    _state.value.copy(
+                        isLoading = false,
+                        hourly = forecast.hourly,
+                        error = null
                     )
 
             } catch (e: Exception) {
 
-                _uiState.value =
-                    ForecastUiState(
+                _state.value =
+
+                    _state.value.copy(
+
+                        isLoading = false,
+
                         error =
-                            e.message
-                                ?: "Unable to load forecast"
+
+                            ErrorHandler.getMessage(e)
+
                     )
             }
         }

@@ -1,10 +1,14 @@
 package com.example.weatherpro.domain.usecase
 
 import com.example.weatherpro.domain.model.Weather
-import com.example.weatherpro.domain.repository.WeatherRepository
+import com.example.weatherpro.domain.repository.ForecastRepository
+import javax.inject.Inject
 
-class GetForecastUseCase(
-    private val repository: WeatherRepository
+
+class GetForecastUseCase @Inject constructor(
+
+    private val repository: ForecastRepository
+
 ) {
 
     suspend operator fun invoke(

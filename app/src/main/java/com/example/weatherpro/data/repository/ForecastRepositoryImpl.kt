@@ -5,27 +5,25 @@ import com.example.weatherpro.data.cache.WeatherCache
 import com.example.weatherpro.data.remote.api.WeatherApi
 import com.example.weatherpro.data.remote.mapper.toDomain
 import com.example.weatherpro.domain.model.Weather
-import com.example.weatherpro.domain.repository.WeatherRepository
+import com.example.weatherpro.domain.repository.ForecastRepository
 import javax.inject.Inject
 
-
-class WeatherRepositoryImpl @Inject constructor(
+class ForecastRepositoryImpl @Inject constructor(
 
     private val api: WeatherApi
 
-) : WeatherRepository {
-
-    override suspend fun getWeather(
+) : ForecastRepository {
+    override suspend fun getForecast(
         lat: Double,
         lon: Double
     ): Weather {
 
         val now = System.currentTimeMillis()
 
-        WeatherCache.weather?.let {
+        WeatherCache.forecast?.let {
 
             if (
-                now - WeatherCache.weatherLastUpdated <
+                now - WeatherCache.forecastLastUpdated <
                 CacheConfig.CACHE_DURATION
             ) {
 
@@ -34,7 +32,7 @@ class WeatherRepositoryImpl @Inject constructor(
         }
 
         val response =
-            api.getWeather(
+            api.getForecast(
                 latitude = lat,
                 longitude = lon
             )
@@ -42,10 +40,10 @@ class WeatherRepositoryImpl @Inject constructor(
         val weather =
             response.toDomain()
 
-        WeatherCache.weather =
+        WeatherCache.forecast =
             weather
 
-        WeatherCache.weatherLastUpdated = now
+        WeatherCache.forecastLastUpdated = now
 
         return weather
     }

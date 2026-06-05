@@ -81,7 +81,7 @@ fun DailyForecastSection(
 
                     Text(
                         text = formatDay(forecast.date),
-                        modifier = Modifier.weight(2f)
+                        modifier = Modifier.weight(1f)
                     )
 
                     val context = LocalContext.current
@@ -109,7 +109,7 @@ fun DailyForecastSection(
                     Text(
                         text =
                             "${forecast.maxTemperature.toInt()}° / ${forecast.minTemperature.toInt()}°",
-                        modifier = Modifier.weight(2f)
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }

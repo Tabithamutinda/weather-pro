@@ -14,17 +14,17 @@ object ErrorHandler {
 
                 when (throwable.code()) {
 
-                    400 -> "Invalid request"
+                    400 -> "Bad Request"
 
-                    401 -> "Invalid API key"
+                    401 -> "Unauthorized"
 
-                    403 -> "Access denied"
+                    403 -> "Forbidden"
 
-                    404 -> "Weather data not found"
+                    429 -> "Too Many Requests"
 
-                    429 -> "Too many requests. Try again later"
+                    500 -> "Internal Error"
 
-                    500 -> "Server unavailable"
+                    503 -> "Service Unavailable"
 
                     else ->
                         "Server error (${throwable.code()})"
